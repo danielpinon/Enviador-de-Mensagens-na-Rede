@@ -2,15 +2,79 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+    <title>Envio de Mensagem Pela Rede</title>
+    <link rel="icon" type="imagem/png" href="/chatting.png" />
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-
-    <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
+    <div class="container-fluid">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <br>
+          </div>
+          <div class="col-12">
+            <center>
+              <img src="chatting.png" height="100px">
+              <h1>Enviar Mensagem</h1>
+              <br>
+            </center>
+          </div>
+          <div class="col-12">
+            <div class="form-group">
+              <label for="maquina">Nome da Máquina</label>
+              <input type="email" class="form-control" id="maquina" aria-describedby="emailHelp" placeholder="Digite o nome do computador">
+              <small id="emailHelp" class="form-text text-muted">Digite o nome do computador que deseja enviar a mensagem</small>
+            </div>
+            <div class="form-group">
+              <label for="mensagem">Mensagem</label>
+              <textarea class="form-control" id="mensagem" rows="3" placeholder="Mensagem para ser enviado para a Máquina"></textarea>
+            </div>
+          </div>
+          <div class="col-12">
+            <button type="button" class="btn btn-primary btn-lg btn-block" onclick="fn.send();">Enviar Mensagem</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script type="text/javascript">
+      // Execute do Cmd
+      const exec = require('child_process').exec;
+      // Função para enviar o comando
+      function execute(command, callback) {
+          exec(command, (error, stdout, stderr) => { 
+              callback(stdout); 
+          });
+      };
+      // Variavel de execucao
+      var fn = {
+        send:()=>{
+          var maquina = document.getElementById("maquina").value;
+          var mensagem = document.getElementById("mensagem").value;
+          if(maquina != "" && mensagem != ""){
+            exec('cmd.exe /c msg /server:'+maquina+' * '+mensagem, (error, stdout, stderr) => {
+              console.log(error); 
+                if(stdout != ""){
+                  console.log(stdout);
+                  fn.sucess(stdout);
+                }
+                if(stderr != ""){
+                  console.log(stderr);
+                  fn.error(stderr);
+                }
+            });
+          }else{
+            alert("Preencha todos os campos!");
+          }
+        },
+        sucess:(t)=>{
+          alert(t);
+        },
+        error:(t)=>{
+         alert(t); 
+        }
+      };
+    </script>
   </body>
 </html>

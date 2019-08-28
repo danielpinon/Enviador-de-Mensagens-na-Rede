@@ -9,12 +9,16 @@ let mainWindow
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: 450,
     height: 600,
+    resizable: false,
+    icon: __dirname + '/chatting.ico',    
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true
     }
   })
+  mainWindow.setMenu(null)
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
