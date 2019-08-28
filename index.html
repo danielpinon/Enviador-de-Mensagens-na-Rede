@@ -37,43 +37,78 @@
         </div>
       </div>
     </div>
-    
+	<!-- Modal -->
+	<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel"><center>Carregando...</center></h5>
+		  </div>
+		  <div class="modal-body">
+			<div class="d-flex justify-content-center">
+			  <div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			  </div>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>-->
+			<!--<button type="button" class="btn btn-primary">Salvar mudanças</button>-->
+		  </div>
+		</div>
+	  </div>
+	</div>
     <script type="text/javascript">
       // Execute do Cmd
-      const exec = require('child_process').exec;
-      // Função para enviar o comando
-      function execute(command, callback) {
-          exec(command, (error, stdout, stderr) => { 
-              callback(stdout); 
-          });
-      };
+      const powershell = require('node-powershell');
+      var $ = require('jquery');
+      var bootstrap = require('bootstrap');
+	  // PoweShell
+	  let ps = new powershell({
+        executionPolicy: 'Bypass',
+        noProfile: true
+	  })
+	  
       // Variavel de execucao
       var fn = {
         send:()=>{
-          var maquina = document.getElementById("maquina").value;
-          var mensagem = document.getElementById("mensagem").value;
-          if(maquina != "" && mensagem != ""){
-            exec('cmd.exe /c msg /server:'+maquina+' * '+mensagem, (error, stdout, stderr) => {
-              console.log(error); 
-                if(stdout != ""){
-                  console.log(stdout);
-                  fn.sucess(stdout);
-                }
-                if(stderr != ""){
-                  console.log(stderr);
-                  fn.error(stderr);
-                }
-            });
+          modal.show();
+          var maquina = document.getElementById("maquina");
+          var mensagem = document.getElementById("mensagem");
+          if(maquina.value != "" && mensagem.value != ""){		  
+            try{
+        			ps.addCommand("msg /server:"+maquina.value+" * "+mensagem.value)
+        		}catch (e) {
+              fn.error("Erro! Tente novamente ou então tente outro método. \n"+e);
+            }
+            ps.invoke()
+            .then(output => {
+              fn.sucess("Mensagem Enviada! "+output);
+            })
+            .catch(err => {
+              fn.error("Erro! Tente novamente ou então tente outro método. \n"+err);
+            })
           }else{
-            alert("Preencha todos os campos!");
+            setTimeout(()=>{if(confirm("Preencha todos os campos!")){setTimeout(()=>{modal.hide();},modal.timeOut)}else{setTimeout(()=>{modal.hide();},modal.timeOut)}},modal.timeIn);
           }
         },
         sucess:(t)=>{
-          alert(t);
+          setTimeout(()=>{if(confirm(t)){setTimeout(()=>{modal.hide();},modal.timeOut)}else{setTimeout(()=>{modal.hide();},modal.timeOut)}},modal.timeIn);
         },
         error:(t)=>{
-         alert(t); 
+          setTimeout(()=>{if(confirm(t)){setTimeout(()=>{modal.hide();},modal.timeOut)}else{setTimeout(()=>{modal.hide();},modal.timeOut)}},modal.timeIn);
         }
+      };
+      var modal = {
+        show:()=>{
+          $('#loadingModal').modal('show');
+        },
+        hide:()=>{
+          $('#loadingModal').modal('hide');
+          document.location.href = document.location.href;
+        },
+        timeIn:1000,
+        timeOut:2000
       };
     </script>
   </body>

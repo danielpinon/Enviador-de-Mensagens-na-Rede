@@ -1,0 +1,1 @@
+electron-packager . msgRede --overwrite --platform=win32 --arch=ia32 --icon=chatting.ico --prune=true --asar=true --out=release-builds --version-string.CompanyName=BCKBONE --version-string.FileDescription=msgRede --version-string.ProductName="Envio de Mensagem na Rede"
